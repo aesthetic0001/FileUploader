@@ -28,6 +28,7 @@ func handleDownloads(r *gin.Engine, saveDir string, uploaded *FileMap) {
 		if fileCache[hash] == nil {
 			fileCache[hash], _ = os.ReadFile(saveDir + hash)
 		}
+		// serve file from memory with filename
 		c.Data(200, "application/octet-stream", fileCache[hash])
 	})
 }

@@ -37,11 +37,11 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 		if err := c.SaveUploadedFile(file, saveDir+hash); err != nil {
 			return
 		}
-		handleFileExpiry(saveDir, dataDir, hash, uploaded)
 		uploaded.Files[hash] = FileMapKey{
 			FileName:   file.Filename,
 			UploadDate: time.Now().UnixMilli(),
 		}
+		handleFileExpiry(saveDir, dataDir, hash, uploaded)
 		dat, _ := json.Marshal(uploaded)
 		os.WriteFile(dataDir+"filemap.json", dat, os.ModePerm)
 		c.JSON(http.StatusOK, gin.H{
