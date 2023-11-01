@@ -25,6 +25,7 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 		h := sha256.New()
 		fileContents, _ := file.Open()
 		io.Copy(h, fileContents)
+		hash := fmt.Sprintf("%x", h.Sum(nil))
 		if uploaded.Files[hash] != (FileMapKey{}) {
 			c.JSON(http.StatusOK, gin.H{
 				"hash":   hash,
@@ -32,7 +33,6 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 			})
 			return
 		}
-		hash := fmt.Sprintf("%x", h.Sum(nil))
 		fmt.Printf("Storing %s (%s)\n", file.Filename, hash)
 		if err := c.SaveUploadedFile(file, saveDir+hash); err != nil {
 			return
