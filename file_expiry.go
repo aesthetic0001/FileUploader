@@ -9,7 +9,7 @@ import (
 
 func handleFileExpiry(saveDir string, dataDir string, fileHash string, uploaded *FileMap) {
 	file := uploaded.Files[fileHash]
-	remainingTime := (time.Now().UnixMilli() - file.UploadDate) + 10*1000
+	remainingTime := (time.Now().UnixMilli() - file.UploadDate) + int64(time.Hour*24*180)
 
 	time.AfterFunc(time.Duration(remainingTime), func() {
 		os.Remove(saveDir + fileHash)
