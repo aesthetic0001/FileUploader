@@ -1,0 +1,6 @@
+# IDE
+.idea
+
+# Dynamically generated files
+data
+uploads
