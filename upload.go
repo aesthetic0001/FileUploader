@@ -44,6 +44,9 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 			dat, _ := json.Marshal(uploaded)
 			os.WriteFile(dataDir+"filemap.json", dat, os.ModePerm)
 		}
-		c.String(http.StatusOK, fmt.Sprintf("%d files uploaded! | Hashes: %s", len(files), hashes))
+		c.JSON(http.StatusOK, gin.H{
+			"hashes": hashes,
+			"status": "ok",
+		})
 	})
 }
