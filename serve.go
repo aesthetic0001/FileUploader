@@ -45,13 +45,8 @@ func handleDownloads(r *gin.Engine, saveDir string, uploaded *FileMap) {
 	})
 
 	r.GET("/total_files", func(c *gin.Context) {
-		fileHashes := make([]string, 0)
-		for k := range uploaded.Files {
-			fileHashes = append(fileHashes, k)
-		}
 		c.JSON(http.StatusOK, gin.H{
-			"total_files": len(fileHashes),
-			"files":       fileHashes,
+			"files": uploaded.Files,
 		})
 	})
 }
