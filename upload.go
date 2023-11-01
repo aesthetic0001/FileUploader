@@ -21,30 +21,30 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 			return
 		}
 
-		form, _ := c.MultipartForm()
-		files := form.File["upload[]"]
-		var hashes = make([]string, len(files))
-		for i, file := range files {
-			h := sha256.New()
-			fileContents, _ := file.Open()
-			io.Copy(h, fileContents)
-			hashes[i] = fmt.Sprintf("%x", h.Sum(nil))
-			if uploaded.Files[hashes[i]] != (FileMapKey{}) {
-				continue
-			}
-			if err := c.SaveUploadedFile(file, saveDir+hashes[i]); err != nil {
-				return
-			}
-			handleFileExpiry(saveDir, dataDir, hashes[i], uploaded)
-			uploaded.Files[hashes[i]] = FileMapKey{
-				FileName:   file.Filename,
-				UploadDate: time.Now().UnixMilli(),
-			}
-			dat, _ := json.Marshal(uploaded)
-			os.WriteFile(dataDir+"filemap.json", dat, os.ModePerm)
+		file, _ := c.FormFile("file")
+		h := sha256.New()
+		hash := fmt.Sprintf("%x", h.Sum(nil))
+		fileContents, _ := file.Open()
+		io.Copy(h, fileContents)
+		if uploaded.Files[hash] != (FileMapKey{}) {
+			c.JSON(http.StatusOK, gin.H{
+				"hash":   hash,
+				"status": "ok",
+			})
+			return
 		}
+		if err := c.SaveUploadedFile(file, saveDir+hash); err != nil {
+			return
+		}
+		handleFileExpiry(saveDir, dataDir, hash, uploaded)
+		uploaded.Files[hash] = FileMapKey{
+			FileName:   file.Filename,
+			UploadDate: time.Now().UnixMilli(),
+		}
+		dat, _ := json.Marshal(uploaded)
+		os.WriteFile(dataDir+"filemap.json", dat, os.ModePerm)
 		c.JSON(http.StatusOK, gin.H{
-			"hashes": hashes,
+			"hash":   fmt.Sprintf("%x", h.Sum(nil)),
 			"status": "ok",
 		})
 	})
