@@ -49,7 +49,7 @@ func main() {
 	handleUploads(r, saveDir, dataDir, &uploaded, &apiKeys)
 	handleDownloads(r, saveDir, &uploaded)
 	for fileHash := range uploaded.Files {
-		handleFileExpiry(saveDir, fileHash, &uploaded)
+		handleFileExpiry(saveDir, dataDir, fileHash, &uploaded)
 	}
-	r.Run()
+	r.Run(":8080")
 }

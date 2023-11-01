@@ -37,7 +37,7 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 				log.Println(err)
 				return
 			}
-			handleFileExpiry(saveDir, hashes[i], uploaded)
+			handleFileExpiry(saveDir, dataDir, hashes[i], uploaded)
 			uploaded.Files[hashes[i]] = FileMapKey{
 				FileName:   file.Filename,
 				UploadDate: time.Now().UnixMilli(),
