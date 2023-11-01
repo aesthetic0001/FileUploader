@@ -4,3 +4,6 @@
 # Dynamically generated files
 data
 uploads
+
+# Build files
+main
