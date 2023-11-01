@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"log"
 	"os"
 )
 
@@ -43,8 +42,7 @@ func main() {
 	json.Unmarshal(fileMapData, &uploaded)
 	json.Unmarshal(apiKeysData, &apiKeys)
 
-	log.Println(uploaded.Files)
-
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	handleUploads(r, saveDir, dataDir, &uploaded, &apiKeys)
 	handleDownloads(r, saveDir, &uploaded)

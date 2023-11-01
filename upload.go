@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -34,7 +33,6 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 				continue
 			}
 			if err := c.SaveUploadedFile(file, saveDir+hashes[i]); err != nil {
-				log.Println(err)
 				return
 			}
 			handleFileExpiry(saveDir, dataDir, hashes[i], uploaded)
