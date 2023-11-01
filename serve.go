@@ -1,8 +1,13 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"os"
+)
 
 func handleDownloads(r *gin.Engine, saveDir string, uploaded *FileMap) {
+	fileCache := make(map[string][]byte)
+
 	r.GET("/download/:hash", func(c *gin.Context) {
 		hash := c.Param("hash")
 		file := uploaded.Files[hash]
@@ -11,5 +16,18 @@ func handleDownloads(r *gin.Engine, saveDir string, uploaded *FileMap) {
 			return
 		}
 		c.FileAttachment(saveDir+hash, file.FileName)
+	})
+
+	r.GET("/cdn/:hash", func(c *gin.Context) {
+		hash := c.Param("hash")
+		file := uploaded.Files[hash]
+		if file == (FileMapKey{}) {
+			c.String(404, "File not found")
+			return
+		}
+		if fileCache[hash] == nil {
+			fileCache[hash], _ = os.ReadFile(saveDir + hash)
+		}
+		c.Data(200, "application/octet-stream", fileCache[hash])
 	})
 }

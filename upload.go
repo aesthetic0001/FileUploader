@@ -12,7 +12,7 @@ import (
 )
 
 func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *FileMap, apiKeys *ApiKeys) {
-	r.MaxMultipartMemory = 8 << 20 // 8 MiB
+	r.MaxMultipartMemory = 8 << 31 // 2GiB
 	r.POST("/upload", func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 
@@ -23,7 +23,6 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 
 		file, _ := c.FormFile("file")
 		h := sha256.New()
-		hash := fmt.Sprintf("%x", h.Sum(nil))
 		fileContents, _ := file.Open()
 		io.Copy(h, fileContents)
 		if uploaded.Files[hash] != (FileMapKey{}) {
@@ -33,6 +32,8 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 			})
 			return
 		}
+		hash := fmt.Sprintf("%x", h.Sum(nil))
+		fmt.Printf("Storing %s (%s)\n", file.Filename, hash)
 		if err := c.SaveUploadedFile(file, saveDir+hash); err != nil {
 			return
 		}
