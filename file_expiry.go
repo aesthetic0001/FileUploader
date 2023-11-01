@@ -18,4 +18,5 @@ func handleFileExpiry(saveDir string, dataDir string, fileHash string, uploaded 
 		dat, _ := json.Marshal(uploaded)
 		os.WriteFile(dataDir+"filemap.json", dat, os.ModePerm)
 	})
+
 }

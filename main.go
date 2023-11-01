@@ -48,6 +48,7 @@ func main() {
 	r := gin.Default()
 	handleUploads(r, saveDir, dataDir, &uploaded, &apiKeys)
 	handleDownloads(r, saveDir, &uploaded)
+	handleDeletions(r, saveDir, dataDir, &uploaded, &apiKeys)
 	for fileHash := range uploaded.Files {
 		handleFileExpiry(saveDir, dataDir, fileHash, &uploaded)
 	}
