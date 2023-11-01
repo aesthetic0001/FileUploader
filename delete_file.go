@@ -8,13 +8,6 @@ import (
 
 func handleDeletions(r *gin.Engine, saveDir string, dataDir string, uploaded *FileMap, apiKeys *ApiKeys) {
 	r.DELETE("/delete/:hash", func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-
-		if !apiKeys.Keys[authHeader] {
-			c.String(401, "Unauthorized")
-			return
-		}
-
 		hash := c.Param("hash")
 		file := uploaded.Files[hash]
 		if file == (FileMapKey{}) {

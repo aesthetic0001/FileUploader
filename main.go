@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"os"
+	"strings"
 )
 
 type FileMapKey struct {
@@ -35,6 +36,29 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
+func AuthMiddleware(protectedPaths []string, apiKeys ApiKeys) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		isProtected := false
+		for _, path := range protectedPaths {
+			if strings.HasPrefix(c.Request.URL.Path, path) {
+				isProtected = true
+				break
+			}
+		}
+		if !isProtected {
+			c.Next()
+			return
+		}
+		authHeader := c.GetHeader("Authorization")
+		if !apiKeys.Keys[authHeader] {
+			c.String(401, "Unauthorized")
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
 func main() {
 	wd, _ := os.Getwd()
 
@@ -61,6 +85,11 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(CORSMiddleware())
+	r.Use(AuthMiddleware([]string{
+		"/delete",
+		"/upload",
+		"/total_files",
+	}, apiKeys))
 	handleUploads(r, saveDir, dataDir, &uploaded, &apiKeys)
 	handleDownloads(r, saveDir, &uploaded)
 	handleDeletions(r, saveDir, dataDir, &uploaded, &apiKeys)
