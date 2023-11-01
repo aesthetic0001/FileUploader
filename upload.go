@@ -25,14 +25,12 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 		form, _ := c.MultipartForm()
 		files := form.File["upload[]"]
 		var hashes = make([]string, len(files))
-
 		for i, file := range files {
 			h := sha256.New()
 			fileContents, _ := file.Open()
 			io.Copy(h, fileContents)
 			hashes[i] = fmt.Sprintf("%x", h.Sum(nil))
 			if uploaded.Files[hashes[i]] != (FileMapKey{}) {
-				log.Println("File already uploaded")
 				continue
 			}
 			if err := c.SaveUploadedFile(file, saveDir+hashes[i]); err != nil {

@@ -47,5 +47,6 @@ func main() {
 
 	r := gin.Default()
 	handleUploads(r, saveDir, dataDir, &uploaded, &apiKeys)
+	handleDownloads(r, saveDir, &uploaded)
 	r.Run()
 }
