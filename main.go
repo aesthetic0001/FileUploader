@@ -96,5 +96,9 @@ func main() {
 	for fileHash := range uploaded.Files {
 		handleFileExpiry(saveDir, dataDir, fileHash, &uploaded)
 	}
+	r.Static("/static", "./public/static")
+	r.GET("/", func(c *gin.Context) {
+		c.File("./public/index.html")
+	})
 	r.Run(":8080")
 }

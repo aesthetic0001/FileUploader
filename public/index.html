@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/dist/output.css" rel="stylesheet">
+    <script src="static/index.js"></script>
+</head>
+<body class="bg-gray-800">
+<div id="top_bar">
+    <button id="fileupload"
+            class="absolute top-0 right-0 bg-emerald-800 font-thin rounded-3xl px-9 m-3 text-lg text-white bottom-0 h-16 transition ease-in-out delay-50 hover:bg-emerald-700">
+        Upload File
+    </button>
+    <input hidden type="file" id="file">
+    <textarea id="key" class="bg-cyan-900 font-thin text-white p-3 m-3 text-lg rounded-3xl transition ease-in-out delay-50 hover:bg-cyan-700" placeholder="Enter your upload key here!"></textarea>
+</div>
+<div id="file_list" class="grid-cols-2"></div>
+</body>
+</html>
