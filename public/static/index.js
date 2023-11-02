@@ -38,11 +38,11 @@ async function waitForLoad() {
         const li = document.createElement('el')
         li.innerHTML = `
 <div class="relative bg-emerald-600 m-5 p-7 rounded-2xl">
-<a class="absolute inset-x-1 p-3 top-0 font-medium tracking-tight text-white" href="http://localhost:8080/cdn/${fileHash}">${file.filename}</a>
+<a class="absolute inset-x-1 p-3 top-0 font-medium tracking-tight text-white" href="${window.location.href}cdn/${fileHash}">${file.filename}</a>
 <button id="delete-${fileHash}" class="absolute inset-y-0 right-0 p-3 m-1 font-medium tracking-tight text-white bg-red-700 rounded-3xl transition-all ease-in-out hover:bg-red-600">Delete</button>
 </div>`
         li.querySelector(`#delete-${fileHash}`).onclick = async () => {
-            await fetch(`http://localhost:8080/delete/${fileHash}`, {
+            await fetch(`${window.location.href}delete/${fileHash}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': localStorage.getItem('key')
@@ -54,7 +54,7 @@ async function waitForLoad() {
     }
 
     async function syncFiles() {
-        const resp = await fetch('http://localhost:8080/total_files', {
+        const resp = await fetch(`${window.location.href}total_files`, {
             headers: {
                 'Authorization': localStorage.getItem('key')
             }
@@ -75,7 +75,7 @@ async function waitForLoad() {
         formData.append('file', file, file.name);
         button.innerHTML = `Uploading ${file.name}...`
         // Post request to server
-        const resp = await fetch('http://localhost:8080/upload', {
+        const resp = await fetch(`${window.location.href}upload`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -89,7 +89,7 @@ async function waitForLoad() {
             }, 2500)
         })
         const data = await resp.json()
-        await navigator.clipboard.writeText(`http://localhost:8080/cdn/${data.hash}`)
+        await navigator.clipboard.writeText(`${window.location.href}/cdn/${data.hash}`)
         syncFiles()
         button.innerHTML = `Copied to clipboard!`
         setTimeout(() => {
