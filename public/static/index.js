@@ -89,7 +89,7 @@ async function waitForLoad() {
             }, 2500)
         })
         const data = await resp.json()
-        await navigator.clipboard.writeText(`${window.location.href}/cdn/${data.hash}`)
+        await navigator.clipboard.writeText(`${window.location.href}cdn/${data.hash}`)
         syncFiles()
         button.innerHTML = `Copied to clipboard!`
         setTimeout(() => {
