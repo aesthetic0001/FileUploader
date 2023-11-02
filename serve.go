@@ -3,17 +3,9 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"os"
 )
 
-type cachedFile struct {
-	ContentType string
-	Content     []byte
-}
-
 func handleDownloads(r *gin.Engine, saveDir string, uploaded *FileMap) {
-	fileCache := make(map[string]cachedFile)
-
 	// todo: maybe use buffer instead of reading the whole file into memory
 	r.GET("/download/:hash", func(c *gin.Context) {
 		hash := c.Param("hash")
@@ -23,16 +15,7 @@ func handleDownloads(r *gin.Engine, saveDir string, uploaded *FileMap) {
 			return
 		}
 
-		if _, exists := fileCache[hash]; !exists {
-			content, _ := os.ReadFile(saveDir + hash)
-			contentType := http.DetectContentType(content)
-			fileCache[hash] = cachedFile{
-				ContentType: contentType,
-				Content:     content,
-			}
-		}
-
-		c.Data(http.StatusOK, "application/octet-stream", fileCache[hash].Content)
+		c.FileAttachment(saveDir+hash, file.FileName)
 	})
 
 	r.GET("/cdn/:hash", func(c *gin.Context) {
@@ -43,16 +26,7 @@ func handleDownloads(r *gin.Engine, saveDir string, uploaded *FileMap) {
 			return
 		}
 
-		if _, exists := fileCache[hash]; !exists {
-			content, _ := os.ReadFile(saveDir + hash)
-			contentType := http.DetectContentType(content)
-			fileCache[hash] = cachedFile{
-				ContentType: contentType,
-				Content:     content,
-			}
-		}
-
-		c.Data(http.StatusOK, fileCache[hash].ContentType, fileCache[hash].Content)
+		c.File(saveDir + hash)
 	})
 
 	r.GET("/total_files", func(c *gin.Context) {
