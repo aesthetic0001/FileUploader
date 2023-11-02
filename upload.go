@@ -29,7 +29,7 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 			tempFileName := fmt.Sprintf("%stmp%s-%d", saveDir, fileName, time.Now().UnixMilli())
 			outFile, _ := os.Create(tempFileName)
 			hash := sha256.New()
-			writer := bufio.NewWriter(outFile)
+			writer := bufio.NewWriterSize(outFile, 8*1024*1024)
 			// copy part to writer
 			io.Copy(writer, io.TeeReader(part, hash))
 			writer.Flush()
