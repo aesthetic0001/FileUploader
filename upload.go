@@ -27,12 +27,14 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 			fileName := part.FileName()
 			tempFileName := fmt.Sprintf("%stmp%s-%d", saveDir, fileName, time.Now().UnixMilli())
 			outFile, _ := os.Create(tempFileName)
-			buf := make([]byte, 1024)
+			buf := make([]byte, 2048)
 			hash := sha256.New()
 			for {
 				n, err := part.Read(buf)
 				if err == io.EOF {
 					break
+				} else if err != nil {
+					panic(err)
 				}
 				if _, err := hash.Write(buf[:n]); err != nil {
 					panic(err)
@@ -41,6 +43,7 @@ func handleUploads(r *gin.Engine, saveDir string, dataDir string, uploaded *File
 					panic(err)
 				}
 			}
+			// flush to disk
 			outFile.Close()
 			hashString := fmt.Sprintf("%x", hash.Sum(nil))
 			if uploaded.Files[hashString] != (FileMapKey{}) {
